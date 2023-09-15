@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    #category {
+        border: none;
+        background: none;
+        margin: 5px;
+        float: left;
+        text-align: left;
+        width: 100%;
+    }
+</style>
+
+<div class="container-fluid" style="margin-top: 80px; margin-bottom: 80px">
+    <div class="row">
+        <div class="col-md-2"> </div>
+
+        @* Category Buttons *@
+        <div class="col-md-1">
+            <h4><b>Categories</b></h4> <br />
+            <button id="category" onclick="categoryButton(0)">All</button>
+            <button id="category" onclick="categoryButton(1)">Electronic</button>
+            <button id="category" onclick="categoryButton(2)">Fashion</button>
+            <button id="category" onclick="categoryButton(3)">Sport</button>
+            <button id="category" onclick="categoryButton(4)">Cosmetic</button>
+        </div>
+
+        <div class="col-md-7" style="padding-left: 50px; padding-right: 50px;">
+            <div id="emptyDiv"> </div>
+
+            @section scripts{
+                    <script>
+                        @* Show all products on first page opening *@
+                        $.ajax({
+                            type: "POST",
+                            url: "/Home/IndexMethod/0",
+                            success: function (response) {
+                                newHtml(response);
+                            },
+                        });
+
+                        @* Send parameter when category button is clicked *@
+                        function categoryButton(id) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/Home/IndexMethod/" + id,
+                                success: function (response) {
+                                    newHtml(response);
+                                },
+                            });
+                        }
+
+                        @* Configure the HTML page based on the incoming data *@
+                        function newHtml(response) {
+                            var newHtml = "";
+                            $.each(response, function (index, value) {
+                                newHtml += '<td style="border: 1px solid #d5d5d5; border-radius: 10px; padding: 15px 5px 30px 5px; display: block; float: left; margin: 10px">' +
+                                    '<img src = "/Content/img/laptop.jpg" style = "width: 220px;" /> <br />' +
+                                    '<div style="padding: 0px 10px 0px 10px; margin-top: 30px">' +
+                                    '<b>' + value.Name + '</b> <br />' +
+                                    value.Description + '<br />' +
+                                    '<span style="color: #B0B0B0">' + value.CategoryName + '</span> <br /> <br />' +
+                                    value.Price + ' TL' + '</div> </td>';
+                            });
+
+                            $("#emptyDiv").html(newHtml);
+                        }
+                    </script>
+            }
+        </div>
+
+        <div class="col-md-2"></div>
+    </div>
+</div>
